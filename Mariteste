@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MALEAL777 - A Força das Cartas</title>
+    <style>
+        /* Importação de Fontes do Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'); /* Para ícones */
+
+        /* Variáveis de Cores e Estilos Globais */
+        :root {
+            --cor-fundo: #121212;
+            --cor-texto: #e0e0e0;
+            --cor-ouro: #FFD700;
+            --cor-ouro-transparente: rgba(255, 215, 0, 0.1);
+            --cor-cartao: #1f1f1f;
+            --sombra-cartao: 0 10px 25px rgba(0, 0, 0, 0.5);
+            --sombra-cartao-hover: 0 15px 35px rgba(255, 215, 0, 0.2);
+            --font-titulo: 'Playfair Display', serif;
+            --font-corpo: 'Montserrat', sans-serif;
+        }
+
+        /* Reset e Estilos de Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-corpo);
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            line-height: 1.8;
+            overflow-x: hidden; /* Prevenir scroll horizontal */
+        }
+
+        /* --- Animações --- */
+        .animate-on-scroll {
+            opacity: 0;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .animate-fade-in {
+            transform: translateY(40px);
+        }
+        .animate-fade-in-up {
+            transform: translateY(50px);
+        }
+        .animate-slide-in-left {
+            transform: translateX(-50px);
+        }
+        .animate-slide-in-right {
+            transform: translateX(50px);
+        }
+        .animate-zoom-in {
+            transform: scale(0.9);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0) translateX(0) scale(1);
+        }
+        
+        /* Delay nas animações */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+
+
+        /* --- Cabeçalho e Navegação --- */
+        .header {
+            background-color: rgba(18, 18, 18, 0.8); /* Mais transparente */
+            backdrop-filter: blur(12px); /* Blur mais intenso */
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--cor-ouro-transparente);
+            transition: background-color 0.3s ease, padding 0.3s ease;
+        }
+
+        .header.scrolled {
+            background-color: rgba(12, 12, 12, 0.9); /* Mais escuro ao rolar */
+            padding: 0.8rem 5%;
+        }
+
+        .logo {
+            font-family: var(--font-titulo);
+            font-size: 1.6rem; /* Aumentado */
+            color: var(--cor-ouro);
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+        .logo:hover {
+            transform: scale(1.05); /* Efeito sutil no logo */
+        }
+
+        .nav a {
+            color: var(--cor-texto);
+            text-decoration: none;
+            margin-left: 2.2rem; /* Aumentado */
+            font-weight: 400;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav a::after { /* Sublinhado animado */
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--cor-ouro);
+            transition: width 0.4s ease;
+        }
+
+        .nav a:hover {
+            color: var(--cor-ouro);
+        }
+        .nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* --- Seções --- */
+        .secao {
+            padding: 120px 10% 100px; /* Aumentado padding superior */
+            border-bottom: 1px solid var(--cor-ouro-transparente);
+            text-align: center;
+            overflow: hidden; /* Para conter animações */
+        }
+
+        .secao-titulo {
+            font-family: var(--font-titulo);
+            font-size: 3rem; /* Aumentado */
+            color: var(--cor-ouro);
+            margin-bottom: 1.5rem; /* Aumentado */
+        }
+
+        .secao-subtitulo {
+            font-size: 1.15rem; /* Aumentado */
+            max-width: 750px; /* Aumentado */
+            margin: 0 auto 3.5rem auto; /* Aumentado */
+            color: #b0b0b0;
+        }
+
+        /* --- Seção Hero (Início) --- */
+        #inicio {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(18, 18, 18, 0.75), var(--cor-fundo)), url('https://i.imgur.com/G2L9m24.jpeg') no-repeat center center/cover; /* Imagem de exemplo, substitua se necessário */
+            position: relative; /* Para pseudo-elemento de overlay */
+        }
+        #inicio::before { /* Overlay sutil para mais contraste */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        #inicio h1 {
+            font-family: var(--font-titulo);
+            font-size: 4.5rem; /* Aumentado */
+            color: #fff;
+            text-shadow: 0 0 25px rgba(0,0,0,0.8);
+            animation: fadeInDown 1s ease-out; /* Animação de entrada */
+        }
+
+        #inicio p {
+            font-size: 1.3rem; /* Aumentado */
+            color: var(--cor-ouro);
+            margin-top: 1.5rem; /* Aumentado */
+            font-weight: 400;
+            animation: fadeInUp 1s ease-out 0.5s; /* Animação com delay */
+            animation-fill-mode: backwards; /* Garante que comece invisível */
+        }
+
+        .cta-button {
+            background-color: var(--cor-ouro);
+            color: var(--cor-fundo);
+            padding: 18px 40px; /* Aumentado */
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 50px;
+            margin-top: 2.5rem; /* Aumentado */
+            display: inline-block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.25);
+            animation: fadeInUp 1s ease-out 1s;
+            animation-fill-mode: backwards;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-7px) scale(1.05); /* Efeito mais pronunciado */
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+            background-color: #ffdf33; /* Cor mais clara no hover */
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        /* --- Seção Sobre --- */
+        #sobre p {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: justify;
+        }
+        
+        /* --- Seção Tiragens (Cartões Interativos) --- */
+        .tiragens-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2.5rem; /* Aumentado */
+        }
+
+        .cartao-flip {
+            background-color: transparent;
+            width: 330px; /* Aumentado */
+            height: 480px; /* Aumentado */
+            perspective: 1200px; /* Aumentado */
+            transition: transform 0.3s ease; /* Para efeito de flutuação */
+        }
+        .cartao-flip:hover {
+            transform: translateY(-10px); /* Efeito de flutuação */
+        }
+
+        .cartao-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.9s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Efeito de flip mais elástico */
+            transform-style: preserve-3d;
+        }
+        
+        .cartao-flip:hover .cartao-inner {
+            transform: rotateY(180deg);
+        }
+
+        .cartao-frente, .cartao-verso {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2.5rem; /* Aumentado */
+            background-color: var(--cor-cartao);
+            border-radius: 20px; /* Mais arredondado */
+            box-shadow: var(--sombra-cartao);
+            border: 1px solid var(--cor-ouro-transparente);
+            transition: box-shadow 0.3s ease;
+        }
+        .cartao-flip:hover .cartao-frente,
+        .cartao-flip:hover .cartao-verso {
+            box-shadow: var(--sombra-cartao-hover);
+        }
+
+        .cartao-frente {
+            background-image: url('https://i.imgur.com/8z2xqhA.png'); /* Imagem de fundo do verso da carta */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .cartao-frente-titulo {
+            font-family: var(--font-titulo);
+            font-size: 2rem; /* Aumentado */
+            color: var(--cor-ouro);
+            background-color: rgba(18,18,18,0.75); /* Mais opaco */
+            padding: 1.2rem; /* Aumentado */
+            border-radius: 12px; /* Mais arredondado */
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .cartao-verso {
+            transform: rotateY(180deg);
+        }
+        
+        .cartao-verso h3 {
+            font-family: var(--font-titulo);
+            color: var(--cor-ouro);
+            font-size: 1.7rem; /* Aumentado */
+            margin-bottom: 1.2rem; /* Aumentado */
+        }
+        
+        .cartao-verso p {
+            font-size: 1rem; /* Aumentado */
+            line-height: 1.7; /* Aumentado */
+            margin-bottom: 1.2rem; /* Aumentado */
+        }
+
+        .cartao-preco {
+            font-size: 2.2rem; /* Aumentado */
+            font-weight: 700;
+            color: var(--cor-ouro);
+            margin-top: auto;
+        }
+        
+        .nota {
+            font-size: 0.85rem; /* Aumentado */
+            font-style: italic;
+            color: #aaa;
+            margin-top: 1.2rem; /* Aumentado */
+        }
+
+        /* --- Seção Como Funciona --- */
+        .processo-container {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem; /* Aumentado */
+            margin-top: 3.5rem; /* Aumentado */
+            flex-wrap: wrap;
+        }
+        .processo-passo {
+            background: var(--cor-cartao);
+            padding: 2.5rem; /* Aumentado */
+            border-radius: 15px; /* Mais arredondado */
+            width: 300px; /* Aumentado */
+            border: 1px solid var(--cor-ouro-transparente);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .processo-passo:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.15);
+        }
+        .processo-passo .numero {
+            font-size: 2.5rem; /* Aumentado */
+            font-weight: 700;
+            color: var(--cor-ouro);
+            display: block;
+            margin-bottom: 1.2rem; /* Aumentado */
+        }
+
+        /* --- Seção Pagamento --- */
+        .pagamento-info {
+            background: var(--cor-cartao);
+            padding: 2.5rem 3rem; /* Aumentado */
+            border-radius: 15px; /* Mais arredondado */
+            display: inline-block;
+            text-align: left;
+            border: 1px solid var(--cor-ouro-transparente);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .pagamento-info p {
+            margin-bottom: 0.7rem; /* Aumentado */
+            font-size: 1.05rem; /* Aumentado */
+        }
+
+        /* --- Rodapé --- */
+        .footer {
+            text-align: center;
+            padding: 5rem 2rem; /* Aumentado */
+            background-color: #0a0a0a;
+        }
+        .footer-quote {
+            font-family: var(--font-titulo);
+            font-size: 1.7rem; /* Aumentado */
+            font-style: italic;
+            color: var(--cor-ouro);
+            margin-bottom: 2.5rem; /* Aumentado */
+        }
+        .footer-logo {
+            font-weight: 600;
+            color: #aaa;
+            font-size: 1.1rem; /* Aumentado */
+        }
+
+        /* --- Botão Voltar ao Topo --- */
+        #scrollTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            border: none;
+            outline: none;
+            background-color: var(--cor-ouro);
+            color: var(--cor-fundo);
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        #scrollTopBtn:hover {
+            background-color: #ffc400; /* Cor mais clara */
+            transform: scale(1.1);
+        }
+
+        /* --- Responsividade --- */
+        @media (max-width: 768px) {
+            .header { padding: 1rem 5%; }
+            .nav { display: none; } /* Simplificar para mobile ou implementar menu hamburguer */
+            #inicio h1 { font-size: 2.8rem; }
+            #inicio p { font-size: 1.1rem; }
+            .secao-titulo { font-size: 2.2rem; }
+            .cartao-flip { width: 90%; max-width: 300px; height: 450px; } /* Ajuste para mobile */
+            .processo-container { flex-direction: column; align-items: center; }
+            .processo-passo { width: 80%; max-width: 350px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">@MALEAL777_</div>
+        <nav class="nav">
+            <a href="#inicio">Início</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#tiragens">Tiragens</a>
+            <a href="#como-funciona">Como Funciona</a>
+            <a href="#pagamento">Pagamento</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <section id="inicio">
+            <h1>A força das cartas guiando você</h1>
+            <p>Clareza, autoconhecimento e conexão com a espiritualidade.</p>
+            <a href="https://wa.me/SEUNUMERO?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20uma%20consulta." target="_blank" class="cta-button">Agende sua Consulta</a>
+        </section>
+
+        <section id="sobre" class="secao">
+            <h2 class="secao-titulo animate-on-scroll animate-fade-in-up">Mariana Leal</h2>
+            <p class="secao-subtitulo animate-on-scroll animate-fade-in-up delay-1">Gratidão por sua confiança nesta consulta!</p>
+            <p class="animate-on-scroll animate-fade-in-up delay-2">
+                Me chamo Mariana Leal, moro no Japão e trabalho com as cartas há 3 anos, unindo sensibilidade, intuição e dedicação em cada tiragem. Acredito nas cartas como uma ferramenta profunda de autoconhecimento, clareza e conexão com a espiritualidade. Cada leitura é conduzida com respeito, cuidado e seriedade, buscando oferecer respostas que tragam direção para o seu momento.
+            </p>
+        </section>
+
+        <section id="tiragens" class="secao">
+            <h2 class="secao-titulo animate-on-scroll animate-fade-in-up">Tiragens</h2>
+            <p class="secao-subtitulo animate-on-scroll animate-fade-in-up delay-1">Explore as energias, sentimentos e caminhos. Para temas como espiritualidade, saúde e finanças, recomenda-se as tiragens de 5 perguntas ou a consulta de 45 minutos.</p>
+            
+            <h3 class="secao-titulo animate-on-scroll animate-fade-in-up delay-2" style="font-size: 2.2rem; margin: 4rem 0 2.5rem;">Tarot & Baralho Cigano</h3>
+            <div class="tiragens-container">
+                <div class="cartao-flip animate-on-scroll animate-zoom-in delay-2">
+                    <div class="cartao-inner">
+                        <div class="cartao-frente">
+                            <span class="cartao-frente-titulo">Consulta 45 min</span>
+                        </div>
+                        <div class="cartao-verso">
+                            <h3>Consulta 45 min</h3>
+                            <p>Trabalharemos com temas e perguntas livres escolhidos conforme a necessidade do(a) consulente.</p>
+                            <span class="nota">Até 3 perguntas complementares por +¥500.</span>
+                            <div class="cartao-preco">¥7,000</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cartao-flip animate-on-scroll animate-zoom-in delay-3">
+                    <div class="cartao-inner">
+                        <div class="cartao-frente">
+                             <span class="cartao-frente-titulo">Tiragens Amorosas</span>
+                        </div>
+                        <div class="cartao-verso">
+                            <h3>Tiragens Amorosas</h3>
+                            <p>Exploramos energias, sentimentos, possibilidades e caminhos que envolvem a vida afetiva.</p>
+                            <div class="cartao-preco">¥5,000</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cartao-flip animate-on-scroll animate-zoom-in delay-4">
+                    <div class="cartao-inner">
+                        <div class="cartao-frente">
+                             <span class="cartao-frente-titulo">5 Perguntas</span>
+                        </div>
+                        <div class="cartao-verso">
+                            <h3>5 Perguntas</h3>
+                            <p>Tiragem de 5 perguntas escolhidas livremente pelo(a) consulente.</p>
+                            <div class="cartao-preco">¥3,200</div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="cartao-flip animate-on-scroll animate-zoom-in delay-2"> <div class="cartao-inner">
+                        <div class="cartao-frente">
+                             <span class="cartao-frente-titulo">1 Pergunta Objetiva</span>
+                        </div>
+                        <div class="cartao-verso">
+                            <h3>1 Pergunta Objetiva</h3>
+                            <p>Tiragem focada em apenas 1 pergunta objetiva.</p>
+                            <div class="cartao-preco">¥1,700</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="secao-titulo animate-on-scroll animate-fade-in-up delay-3" style="font-size: 2.2rem; margin: 6rem 0 2.5rem;">Baralho de Pombogira</h3>
+            <div class="tiragens-container">
+                <div class="cartao-flip animate-on-scroll animate-zoom-in delay-3">
+                    <div class="cartao-inner">
+                        <div class="cartao-frente">
+                            <span class="cartao-frente-titulo">5 Perguntas</span>
+                        </div>
+                        <div class="cartao-verso">
+                            <h3>5 Perguntas</h3>
+                            <p>Tiragem de 5 perguntas escolhidas livremente pelo (a) consulente.</p>
+                            <div class="cartao-preco">¥3,700</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cartao-flip animate-on-scroll animate-zoom-in delay-4">
+                    <div class="cartao-inner">
+                        <div class="cartao-frente">
+                            <span class="cartao-frente-titulo">1 Pergunta Objetiva</span>
+                        </div>
+                        <div class="cartao-verso">
+                            <h3>1 Pergunta Objetiva</h3>
+                            <p>Tiragem focada em apenas 1 pergunta objetiva.</p>
+                            <div class="cartao-preco">¥1,700</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="como-funciona" class="secao">
+            <h2 class="secao-titulo animate-on-scroll animate-fade-in-up">Forma de Trabalho</h2>
+            <p class="secao-subtitulo animate-on-scroll animate-fade-in-up delay-1">Um processo simples e direto para a sua comodidade.</p>
+            <div class="processo-container">
+                <div class="processo-passo animate-on-scroll animate-slide-in-left delay-2">
+                    <span class="numero">1</span>
+                    <p>Você entra em contato, solicita a consulta e escolhe a tiragem desejada a partir do catálogo.</p>
+                </div>
+                <div class="processo-passo animate-on-scroll animate-fade-in-up delay-3"> <span class="numero">2</span>
+                    <p>Após a confirmação do pagamento, a consulta será agendada no horário combinado.</p>
+                </div>
+                <div class="processo-passo animate-on-scroll animate-slide-in-right delay-4">
+                    <span class="numero">3</span>
+                    <p>A entrega da sua tiragem será feita dentro de até 48 horas.</p>
+                </div>
+            </div>
+             <p class="nota animate-on-scroll animate-fade-in-up delay-4" style="margin-top: 2.5rem;">Caso haja interesse em atendimento no mesmo dia, verificarei a disponibilidade de horários e, se possível, será cobrado um acréscimo de ¥300.</p>
+        </section>
+
+        <section id="pagamento" class="secao">
+            <h2 class="secao-titulo animate-on-scroll animate-fade-in-up">Forma de Pagamento</h2>
+            <div class="pagamento-info animate-on-scroll animate-zoom-in delay-1">
+                <p><strong>Banco:</strong> ゆうちょ銀行 (Japan Post Bank)</p>
+                <p><strong>Número da conta:</strong> 12410-30832861</p>
+                <p><strong>Titular:</strong> レアル ロペス マリアナ (LEAL LOPES MARIANA)</p>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="footer">
+        <p class="footer-quote animate-on-scroll animate-fade-in-up">“O que ela não diz o baralho vai me mostrar"</p>
+        <div class="footer-logo animate-on-scroll animate-fade-in-up delay-1">@MALEAL777_</div>
+    </footer>
+
+    <button id="scrollTopBtn" title="Voltar ao topo"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+        // Script para animação de elementos ao rolar
+        const animatedElements = document.querySelectorAll('.animate-on-scroll');
+
+        const observerOptions = {
+            root: null, // Observa em relação ao viewport
+            rootMargin: '0px',
+            threshold: 0.2 // % do elemento visível para disparar
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // observer.unobserve(entry.target); // Descomente se quiser que a animação ocorra apenas uma vez
+                } else {
+                    // entry.target.classList.remove('visible'); // Comente se quiser que a animação ocorra apenas uma vez
+                }
+            });
+        }, observerOptions);
+
+        animatedElements.forEach(el => {
+            observer.observe(el);
+        });
+
+        // Script para o botão "Voltar ao Topo" e header dinâmico
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+        const header = document.querySelector(".header");
+
+        window.onscroll = function() {
+            // Botão Voltar ao Topo
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                scrollTopBtn.style.display = "block";
+            } else {
+                scrollTopBtn.style.display = "none";
+            }
+
+            // Header dinâmico
+            if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                header.classList.add("scrolled");
+            } else {
+                header.classList.remove("scrolled");
+            }
+        };
+
+        scrollTopBtn.addEventListener("click", () => {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+
+    </script>
+
+</body>
+</html>
+
